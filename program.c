@@ -20,7 +20,7 @@ volatile int * DISP_4_5 = (int *) HEX5_HEX4_BASE; //for hours
 
 volatile int t_hr = 0, t_min = 0, t_sec = 0; //timer values
 volatile int meal_frequency = 2; //twice daily (12 hours gaps) 
-volatile int meal_interval;
+volatile int meal_interval
 volatile int meal_weight = 150;  //grams
 
 int digit_to_hex(int value){
@@ -49,7 +49,7 @@ void change_settings(){
             break;
         }
         else if (pb_value == 2){ // increase value
-            if(meal_frequency < 9) //ensure there is at most 9 meals per day
+            if(meal_frequency < 3) //ensure there is at most 9 meals per day
                 meal_frequency += 1;
         }
         else if (pb_value == 4){ //decrease value
@@ -177,11 +177,14 @@ void wait_for_timer(){
     tick();
 }
 
-int read_settings_sw(void) //read the state of the mode switch
-{
+int read_settings_sw(void) { //read the state of the mode switch
   volatile int readSwitch;
   readSwitch = *SETTINGS_SWITCH & 0x1; //reads only first bit
   return readSwitch;
+}
+
+void feed_that_mf(){
+    //@TODO: add this
 }
 
 int main(void){
@@ -192,8 +195,13 @@ int main(void){
 		if(read_settings_sw() == 1) //check if settings mode needs to entered
             change_settings();
         
+        if(t_hr == meal_interval){
+            feed_that_mf(0)
+            set_timer();
+        }
 
-
-
+        if(check_timer() == 1)
+			wait_for_timer();
+		else{}
     }
 }
