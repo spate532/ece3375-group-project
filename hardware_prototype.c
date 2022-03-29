@@ -1,3 +1,5 @@
+#include "address_map_arm.h"
+
 // structure for the GPIO
 typedef struct _GPIO
 {
@@ -34,11 +36,12 @@ unsigned int lowWater=100;
 unsigned int fullWater=450;
 unsigned int feedTime=2000;//20 seconds
 
-
+//reverse polarity to retract actuator
 void retractMotor(motor) {
     gpio->data = (0b10 << 2*motor);
 }
 
+// forward polarity to extend actuator
 void extendMotor(motor) {
     gpio->data = (0b01 << 2*motor);
 }
@@ -57,6 +60,7 @@ void dispenseFood(foodWeight) {
         // keep motor up to release food
         else {
             retractMotor(0);
+            extendMotor(1); //make sure water stays closed
         }
     }
 }
@@ -64,12 +68,13 @@ void dispenseFood(foodWeight) {
 void dispenseWater() {
     while(1) {
         if(weightCalc(1)>=fullWater) {
-            extendMotor(1)
+            extendMotor(1);
             break;
         }
         // keep motor up to release water
         else {
             retractMotor(1);
+            extendMotor(0); //make sure food stays closed
         }
     }
 }
