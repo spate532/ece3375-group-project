@@ -1,13 +1,17 @@
 #include "address_map_arm.h"
-
+#define TIMER_A9_BASE 0xFFFEC600
+#define HEX3_HEX0_BASE 0xFF200020
+#define HEX5_HEX4_BASE 0xFF200030
 #define SW_BASE 0xFF200040
 #define KEY_BASE 0xFF200050
 
+volatile a9_timer * const timer_1 = ( a9_timer *) TIMER_A9_BASE ;   //hardware pointers
 volatile int * SETTINGS_SWITCH = (int *) SW_BASE;   //used for entering settings
 volatile int * BUTTONS = (int *) KEY_BASE;          //used for increasing/decreasing values + setting
 volatile int * DISP_0_3 = (int *) HEX3_HEX0_BASE; // for minutes and seconds
 volatile int * DISP_4_5 = (int *) HEX5_HEX4_BASE; //for hours
 
+volatile int t_hr = 0, t_min = 0, t_sec = 0; //timer values
 volatile int meal_frequency = 2; //twice daily (12 hours gaps) 
 volatile int meal_weight = 150;  //grams
 
