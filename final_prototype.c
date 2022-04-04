@@ -124,7 +124,7 @@ void continueTimer() {
 int readPushButtons(void) //read the state of the pushbuttons
 {
   volatile int readButton;
-  readButton = *pushbutton & 0x1; // reads only first bits
+  readButton = *pushbutton;
   return readButton;
 }
 
@@ -136,11 +136,11 @@ int main(void) {
     initializeTimer();
 
     while(1) {
-        if(readPushButtons() == 8) {
+        if(readPushButtons() & 0b1000) {
             change_settings();
         }
         continueTimer();
-        feedTime = 24/get_meal_frequency();
+        feedTime = 36/get_meal_frequency();
         mealWeight = get_meal_weight();
         if (currentTime>=feedTime) {
             foodStartWeight();
